@@ -1,0 +1,22 @@
+
+services:
+  - type: web
+    name: HEINZ-MD-BOT
+    env: node
+    plan: free
+    repo: https://github.com/justheinz/HEINZ-MD-BOT.git
+    branch: main
+    buildCommand: npm install
+    startCommand: node index.js
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+      - key: MODE
+        value: public
+      - key: PREFIX
+        value: .
+      - key: BOT_NAME
+        value: HEINZ-MD-BOT
+      - key: OWNER_NUMBER
+        value: 56945031186
