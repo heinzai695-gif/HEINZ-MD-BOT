@@ -52,7 +52,7 @@
 **ɢɪᴛʜᴜʙ ᴅᴇᴘʟᴏʏᴍᴇɴᴛ** 
 
 ```
-name: Node.js Auto-Restart CI
+name: Node.js CI
 
 on:
   push:
@@ -61,16 +61,15 @@ on:
   pull_request:
     branches:
       - main
-  schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [20.x]   # Specific Node.js version set to 20.x
 
     steps:
     - name: Checkout repository
@@ -80,24 +79,16 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
+        check-latest: true   # Always grab the exact latest patch for this version
 
     - name: Install dependencies
       run: npm install
 
-    - name: Install FFmpeg
-      run: sudo apt-get update && sudo apt-get install -y ffmpeg
+    - name: Build project (optional)
+      run: npm run build || echo "No build script found, skipping..."
 
-    - name: Start application with timeout
-      run: |
-        echo "🚀 Starting bot (will run max 6 hours)..."
-        timeout 21600s npm start || echo "⏹ Bot stopped or timed out"
-
-    - name: Auto-commit to trigger restart
-      run: |
-        git config --global user.email "autorestart@bot.com"
-        git config --global user.name "Auto Restart Bot"
-        git commit --allow-empty -m "⏱️ Automatic bot restart"
-        git push
+    - name: Start application
+      run: npm start
 ```
 
 ---
