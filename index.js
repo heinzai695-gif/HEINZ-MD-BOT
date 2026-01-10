@@ -94,7 +94,7 @@ const port = process.env.PORT || 9090;
   const conn = makeWASocket({
           logger: P({ level: 'silent' }),
           printQRInTerminal: false,
-          browser: Browsers.macOS("Firefox"),
+          browser: ["Ubuntu", "Chrome", "20.0.04"],
           syncFullHistory: true,
           auth: state,
           version
@@ -102,10 +102,22 @@ const port = process.env.PORT || 9090;
       
   conn.ev.on('connection.update', (update) => {
   const { connection, lastDisconnect } = update
-  if (connection === 'close') {
-  if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
-  connectToWA()
-  }
+  // NEW CODE (STABLE)
+
+if (connection === 'close') {
+
+    const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
+
+    console.log('Connection closed due to ', lastDisconnect?.error, ', reconnecting ', shouldReconnect);
+
+    
+
+    if (shouldReconnect) {
+
+        connectToWA();
+
+    }
+
   } else if (connection === 'open') {
   console.log('🧬 Installing Plugins')
   const path = require('path');
